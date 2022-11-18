@@ -25,18 +25,18 @@ class Auth with ChangeNotifier {
     return prefs.getString('id');
   }
 
+  Future<bool> isLoggedIn() async {
+    bool isLoggedIn = await GoogleSignIn().isSignedIn();
+    if (isLoggedIn && prefs.getString('id')?.isNotEmpty == true) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   Future<void> googleSignIn() async {
     final googleSignIn = GoogleSignIn();
     final googleAccount = await googleSignIn.signIn();
-
-    Future<bool> isLoggedIn() async {
-      bool isLoggedIn = await googleSignIn.isSignedIn();
-      if (isLoggedIn && prefs.getString('id')?.isNotEmpty == true) {
-        return true;
-      } else {
-        return false;
-      }
-    }
 
     if (googleAccount != null) {
       final googleAuth = await googleAccount.authentication;
