@@ -25,6 +25,7 @@ class Auth with ChangeNotifier {
     return prefs.getString('id');
   }
 
+//ovu funkciju trebam popraviti
   Future<bool> isLoggedIn() async {
     bool isLoggedIn = await GoogleSignIn().isSignedIn();
     if (isLoggedIn && prefs.getString('id')?.isNotEmpty == true) {
