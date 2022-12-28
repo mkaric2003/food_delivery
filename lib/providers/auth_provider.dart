@@ -1,4 +1,4 @@
-// ignore_for_file: unused_import, unused_element
+// ignore_for_file: unused_import, unused_element, unused_catch_clause
 
 import 'package:app_food_delivery/screens/home_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -98,7 +98,52 @@ class Auth with ChangeNotifier {
 
   Future<void> handleSignOut() async {
     await FirebaseAuth.instance.signOut();
+    notifyListeners();
+  }
 
+  Future<void> signUpWithEmailAndPassword(String email, String password,
+      String fullName, BuildContext context) async {
+    try {
+      await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: email.toLowerCase().trim(),
+        password: password.trim(),
+      );
+      final User? user = FirebaseAuth.instance.currentUser;
+      final uid = user!.uid;
+      user.updateDisplayName(fullName);
+      user.reload();
+
+      await FirebaseFirestore.instance.collection('users').doc(uid).set({
+        'id': uid,
+        'name': fullName,
+        'email': email.toLowerCase(),
+        'createdAt': Timestamp.now(),
+      });
+      Navigator.of(context).pushReplacementNamed(HomeScreen.routeName);
+    } on FirebaseException catch (error) {
+      Fluttertoast.showToast(msg: error.message!);
+    }
+    notifyListeners();
+  }
+
+  Future<void> loginWithEmailAndPassword(
+      String email, String password, BuildContext context) async {
+    try {
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: email.toLowerCase().trim(),
+        password: password.trim(),
+      );
+      final User? user = FirebaseAuth.instance.currentUser;
+      //Navigator.of(context).pushReplacementNamed(HomeScreen.routeName);
+
+      if (user != null) {
+        await Navigator.of(context).pushReplacementNamed(HomeScreen.routeName);
+      } else {
+        return;
+      }
+    } on FirebaseException catch (error) {
+      Fluttertoast.showToast(msg: error.message!);
+    }
     notifyListeners();
   }
 }

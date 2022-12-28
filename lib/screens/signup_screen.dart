@@ -1,4 +1,4 @@
-// ignore_for_file: use_key_in_widget_constructors, prefer_const_constructors, sized_box_for_blackspace
+// ignore_for_file: use_key_in_widget_constructors, prefer_const_constructors, sized_box_for_blackspace, unused_import, sized_box_for_whitespace
 
 import 'package:app_food_delivery/providers/auth_provider.dart';
 import 'package:app_food_delivery/screens/home_screen.dart';
@@ -61,26 +61,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
     if (isValid) {
       _formKey.currentState!.save();
       setState(() {});
-      try {
-        await FirebaseAuth.instance.createUserWithEmailAndPassword(
-          email: emailController.text.toLowerCase().trim(),
-          password: passController.text.trim(),
-        );
-        final User? user = FirebaseAuth.instance.currentUser;
-        final uid = user!.uid;
-        user.updateDisplayName(fullNameController.text);
-        user.reload();
-
-        await FirebaseFirestore.instance.collection('users').doc(uid).set({
-          'id': uid,
-          'name': fullNameController.text,
-          'email': emailController.text.toLowerCase(),
-          'createdAt': Timestamp.now(),
-        });
-        Navigator.of(context).pushReplacementNamed(HomeScreen.routeName);
-      } on FirebaseException catch (error) {
-        Fluttertoast.showToast(msg: error.message!);
-      }
+      final auth = Provider.of<Auth>(context, listen: false);
+      auth.signUpWithEmailAndPassword(emailController.text, passController.text,
+          fullNameController.text, context);
     }
   }
 

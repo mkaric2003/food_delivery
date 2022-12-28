@@ -1,4 +1,4 @@
-// ignore_for_file: use_key_in_widget_constructors, prefer_const_constructors, sized_box_for_blackspace
+// ignore_for_file: use_key_in_widget_constructors, prefer_const_constructors, sized_box_for_blackspace, unused_import, sized_box_for_whitespace
 
 import 'package:app_food_delivery/providers/auth_provider.dart';
 import 'package:app_food_delivery/screens/forgetPass_screen.dart';
@@ -39,37 +39,6 @@ class _LoginScreenState extends State<LoginScreen> {
     });
   }
 
-  /* Future<void> _googleSignIn() async {
-    final googleSignIn = GoogleSignIn();
-    final googleAccount = await googleSignIn.signIn();
-    if (googleAccount != null) {
-      final googleAuth = await googleAccount.authentication;
-      if (googleAuth.accessToken != null && googleAuth.idToken != null) {
-        try {
-          final authResult = await FirebaseAuth.instance
-              .signInWithCredential(GoogleAuthProvider.credential(
-            idToken: googleAuth.idToken,
-            accessToken: googleAuth.accessToken,
-          ));
-          if (authResult.additionalUserInfo!.isNewUser) {
-            await FirebaseFirestore.instance
-                .collection('users')
-                .doc(authResult.user!.uid)
-                .set({
-              'id': authResult.user!.uid,
-              'name': authResult.user!.displayName,
-              'email': authResult.user!.email,
-              'createdAt': Timestamp.now(),
-            });
-          }
-          Navigator.of(context).pushReplacementNamed(HomeScreen.routeName);
-        } on FirebaseException catch (error) {
-          Fluttertoast.showToast(msg: error.message!);
-        }
-      }
-    }
-  }*/
-
   void submitLoginForm() async {
     final isValid = _formKey.currentState!.validate();
     FocusScope.of(context).unfocus();
@@ -78,20 +47,9 @@ class _LoginScreenState extends State<LoginScreen> {
       _formKey.currentState!.save();
       setState(() {});
 
-      try {
-        FirebaseAuth.instance.signInWithEmailAndPassword(
-          email: emailController.text.toLowerCase().trim(),
-          password: passController.text.trim(),
-        );
-        final User? user = FirebaseAuth.instance.currentUser;
-        if (user != null) {
-          Navigator.of(context).pushReplacementNamed(HomeScreen.routeName);
-        } else {
-          return;
-        }
-      } on FirebaseException catch (error) {
-        Fluttertoast.showToast(msg: error.message!);
-      }
+      final auth = Provider.of<Auth>(context, listen: false);
+      await auth.loginWithEmailAndPassword(
+          emailController.text, passController.text, context);
     }
   }
 
@@ -99,11 +57,6 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     final auth = Provider.of<Auth>(context);
     return Container(
-      /*decoration: BoxDecoration(
-          image: DecorationImage(
-              image: AssetImage('assets/images/testna.jpg'),
-              fit: BoxFit.cover,
-              opacity: 0.3)),*/
       decoration: BoxDecoration(
         gradient: LinearGradient(colors: [
           Color.fromARGB(255, 162, 239, 184).withOpacity(1),

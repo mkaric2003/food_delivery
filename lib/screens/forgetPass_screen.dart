@@ -1,4 +1,4 @@
-// ignore_for_file: file_names, prefer_const_constructors
+// ignore_for_file: file_names, prefer_const_constructors, unused_import
 
 import 'package:app_food_delivery/providers/auth_provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
